@@ -94,7 +94,7 @@ ol10-kvm-oracle26ai-flyway/
 │   │   └── sql/
 │   │       ├── V1__create_hr_schema.sql
 │   │       └── V2__populate_hr.sql
-│   └── scripts/
+│   └── secure/
 │       └── generate-hash.sh
 ├── environments/
 │   ├── dev/
