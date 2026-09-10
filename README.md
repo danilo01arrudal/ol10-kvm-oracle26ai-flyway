@@ -27,7 +27,7 @@ Tudo isso controlado pelo Terraform, de forma **reprodutível**, **configurável
 - **Extensível**: fácil adicionar novos schemas ou migrations via Flyway.
 - **Integrável**: pode ser usado em pipelines CI/CD.
 
-<img width="1408" height="768" alt="image" src="https://github.com/user-attachments/assets/8077d0b2-5279-4db1-836e-ab6fe69bb958" />
+<img width="1408" height="768" alt="image" src="https://github.com/danilo01arrudal/ol10-kvm-oracle26ai-flyway/tree/3cba5c8bd057825ad763d3f31889244abffd57eb/images/0001.png" />
 
 ## Principais Funcionalidades
 
