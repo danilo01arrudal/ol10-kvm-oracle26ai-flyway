@@ -121,37 +121,141 @@ ol10-kvm-oracle26ai-flyway/
 
 ## ✅ Pré-requisitos
 
-### 1. Host (Oracle Linux 10)
+Antes de executar o projeto, certifique-se de que o servidor host atenda aos seguintes requisitos:
 
-- Virtualização por hardware habilitada (`vmx` ou `svm`)
-- Pacotes:
-  ```bash
-  sudo dnf install -y qemu-kvm libvirt virt-install openssl openssh-clients
-  ```
-- Terraform instalado
-- Serviço `libvirtd` ativo
-- Usuário no grupo `libvirt` e `kvm`
-- Rede `default` do libvirt ativa
-- Espaço em disco suficiente (≥ 100 GB livres recomendado)
+### 1. Sistema Operacional
+- **Oracle Linux 10** (ou qualquer distribuição Linux com suporte a KVM/libvirt).
+- Arquitetura **x86_64**.
 
-### 2. Artefatos necessários (no host)
+### 2. Verificação de Hardware
+Certifique-se de que a virtualização por hardware (Intel VT-x ou AMD-V) está habilitada na BIOS e suportada pelo kernel:
 
-Antes de executar o Terraform, baixe e coloque nos locais corretos:
+```bash
+grep -E "vmx|svm" /proc/cpuinfo
+```
 
-| Artefato                                      | Local sugerido                          |
-|-----------------------------------------------|-----------------------------------------|
-| ISO Oracle Linux 8.10                         | `/var/lib/libvirt/images/`              |
-| RPM `oracle-ai-database-ee-26ai-*.el8.x86_64.rpm` | `data/oracle/`                       |
-| Flyway (zip) + driver JDBC Oracle             | `data/oracle/` ou baixado automaticamente pelos scripts |
+Se não houver saída, ative a virtualização na BIOS.
 
-### 3. Recursos mínimos recomendados para a VM
+### 3. Pacotes e Ferramentas
+Instale os seguintes pacotes usando o gerenciador `dnf` (ou `yum`):
 
-| Recurso     | Valor mínimo | Valor recomendado |
-|-------------|--------------|-------------------|
-| Memória     | 8 GB         | 16 GB             |
-| vCPUs       | 4            | 8                 |
-| Disco       | 80 GB        | 100–150 GB        |
-| Swap        | 8 GB         | 16 GB             |
+```bash
+sudo dnf install -y qemu-kvm libvirt virt-install openssl
+```
+
+- **qemu-kvm**: hipervisor KVM.
+- **libvirt**: API de gerenciamento de virtualização.
+- **virt-install**: utilitário de linha de comando para criar VMs.
+- **openssl**: necessário para gerar hashes de senha (SHA‑512).
+
+### 4. Terraform
+O Terraform **não** está disponível nos repositórios padrão do Oracle Linux. Siga os passos abaixo para instalá‑lo:
+
+**Método 1 – Repositório oficial (recomendado):**
+
+```bash
+# Adicionar o repositório oficial do HashiCorp
+sudo dnf install -y dnf-plugins-core
+sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+# Instalar o Terraform
+sudo dnf install -y terraform
+
+# Verificar a instalação
+terraform --version
+```
+
+**Método 2 – Binário manual:**
+
+```bash
+wget https://releases.hashicorp.com/terraform/1.9.5/terraform_1.9.5_linux_amd64.zip
+unzip terraform_1.9.5_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+```
+
+(Substitua a versão pela mais recente disponível.)
+
+### 5. Serviço libvirtd
+Habilite e inicie o serviço libvirt:
+
+```bash
+sudo systemctl enable --now libvirtd
+sudo systemctl enable --now virtlogd
+```
+
+Verifique o status:
+
+```bash
+sudo systemctl status libvirtd
+```
+
+### 6. Permissões de Usuário
+O usuário que executará o Terraform (geralmente o mesmo que roda o `virt-install`) precisa ter permissão para acessar o libvirt e escrever nos diretórios de discos.
+
+**Opção A – Adicionar o usuário ao grupo `libvirt`** (recomendado):
+
+```bash
+sudo usermod -aG libvirt,kvm $USER
+# Faça logout e login novamente para aplicar o grupo
+```
+
+**Opção B – Executar como root** (não recomendado para produção).
+
+Além disso, garanta que o diretório onde os discos serão criados (ex: `/var/lib/libvirt/images/`) tenha permissões adequadas:
+
+```bash
+sudo chown -R $USER:$USER /var/lib/libvirt/images/
+```
+
+### 7. Rede
+Certifique‑se de que a rede padrão do libvirt (`default`) esteja ativa e configurada:
+
+```bash
+sudo virsh net-list --all
+sudo virsh net-start default   # se estiver inativa
+sudo virsh net-autostart default
+```
+
+Para verificar os detalhes da rede:
+
+```bash
+sudo virsh net-dumpxml default | grep -A5 "<ip"
+```
+
+A rede padrão geralmente utiliza o range `192.168.122.0/24`.
+
+### 8. ISO de Instalação
+Baixe a ISO do Oracle Linux 8.10 e coloque‑a em um diretório acessível (ex: `/var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-dvd.iso`). Você pode obter a ISO no [site oficial da Oracle](https://yum.oracle.com/oracle-linux-isos.html).
+
+Exemplo de download com `wget`:
+
+```bash
+wget https://yum.oracle.com/ISOS/OracleLinux/OL8/u10/x86_64/OracleLinux-R8-U10-x86_64-dvd.iso -O /var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-dvd.iso
+```
+
+### 9. Espaço em Disco
+Verifique se há espaço suficiente no diretório de discos (pelo menos o tamanho definido em `disk_size_gb`).
+
+### 10. Variáveis de Ambiente (opcional)
+Para facilitar, defina a variável `LIBVIRT_DEFAULT_URI` para apontar para o sistema QEMU:
+
+```bash
+export LIBVIRT_DEFAULT_URI="qemu:///system"
+```
+
+Adicione ao seu `~/.bashrc` para persistência.
+
+### 11. Teste de Funcionamento
+Antes de executar o Terraform, teste manualmente o `virt-install` com uma VM simples para garantir que tudo está funcionando:
+
+```bash
+virt-install --version
+virsh list --all
+```
+
+---
+
+Após atender a todos os requisitos, prossiga com a configuração e uso do projeto conforme descrito na seção **🚀 Como Utilizar**.
 
 ## 🚀 Como Utilizar
 
