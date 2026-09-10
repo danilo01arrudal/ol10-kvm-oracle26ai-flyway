@@ -37,7 +37,7 @@ Tudo isso controlado pelo Terraform, de forma **reprodutível**, **configurável
 | Instalação desassistida do SO         | Kickstart gerado dinamicamente a partir de template                       |
 | Rede estática                         | IP, gateway, máscara e DNS configuráveis                                  |
 | Particionamento flexível              | LVM com volumes root e swap parametrizados                                |
-| Instalação Oracle Database 26ai EE    | Via RPM + script de criação de banco (CDB + PDB)                          |
+| Instalação Oracle Database 26ai EE    | Via script de criação de banco (CDB + PDB)                          |
 | Instalação e configuração do Flyway   | Download + configuração automática                                        |
 | Deploy de schema via Flyway           | Execução de migrations (exemplo: schema HR)                               |
 | Ciclo de vida completo                | `terraform apply` / `terraform destroy`                                   |
