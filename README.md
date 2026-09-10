@@ -56,7 +56,6 @@ VM pronta para uso com Oracle Database + schema HR
 
 text## 🗂️ Estrutura do Projeto
 
-```plaintext
 ol10-kvm-oracle26ai-flyway/
 ├── README.md
 ├── LICENSE
@@ -100,55 +99,6 @@ ol10-kvm-oracle26ai-flyway/
 │   └── troubleshooting.md
 └── images/
 ⚙️ Tecnologias Utilizadas
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 TecnologiaVersão / ObservaçãoFinalidadeOracle Linux10 (host) / 8.10 (guest)SO do host e da VMKVM / libvirt—HipervisorTerraform≥ 1.5Infrastructure as Codevirt-install—Criação da VMOracle Database26ai Enterprise EditionBanco de dadosoracle-ai-database-preinstall-26ai—Pré-requisitos do OracleFlywayCommunity (última estável)Controle de versão de schema / migrationsJava17 ou 21 (OpenJDK)Runtime do Flyway
 ✅ Pré-requisitos
