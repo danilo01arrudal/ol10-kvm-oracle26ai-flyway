@@ -1,4 +1,4 @@
-# Provisionamento Automatizado de VMs Oracle Linux 8.10 com Terraform em ambiente on-premise (KVM / Oracle Linux 10) && Instalando Oracle Database 26ai Enterprise Edition + Flyway para deploy automatizado de schemas
+# Provisionamento Automatizado de VMs Oracle Linux 8.10 com Terraform em ambiente on-premise (KVM / Oracle Linux 10) -- Instalando Oracle Database 26ai Enterprise Edition + Flyway para deploy automatizado de schemas
 
 [![GitHub](https://img.shields.io/badge/Repository-danilo01arrudal/ol10--kvm--oracle26ai--flyway-blue?logo=github)](https://github.com/danilo01arrudal/ol10-kvm-oracle26ai-flyway)
 [![Terraform](https://img.shields.io/badge/Terraform-≥1.5-purple?logo=terraform)](https://www.terraform.io/)
