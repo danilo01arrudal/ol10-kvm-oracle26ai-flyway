@@ -15,7 +15,7 @@ Este projeto tem como objetivo automatizar a criação de máquinas virtuais com
 - **Modular**: a lógica de criação da VM está encapsulada em um módulo reutilizável, facilitando a manutenção e a evolução do projeto.
 - **Integrável**: pode ser facilmente incorporado a pipelines CI/CD ou utilizado em conjunto com outras ferramentas de automação.
 
-<img width="1408" height="768" alt="image" src="https://github.com/user-attachments/assets/8077d0b2-5279-4db1-836e-ab6fe69bb958" />
+<img width="1408" height="768" alt="image" src="https://github.com/danilo01arrudal/ol10-kvm-oracle26ai-flyway/blob/main/images/0001.png" />
 
 ## Principais Funcionalidades
 
