@@ -115,9 +115,9 @@ ol10-kvm-oracle26ai-flyway/
 | Terraform               | ≥ 1.5                        | Infrastructure as Code                          |
 | virt-install            | —                            | Criação da VM                                   |
 | Oracle Database         | 26ai Enterprise Edition      | Banco de dados                                  |
-| oracle-ai-database-preinstall-26ai | —                  | Pré-requisitos do Oracle                        |
+| oracle-ai-database-preinstall-26ai | —                 | Pré-requisitos do Oracle                        |
 | Flyway                  | Community (última estável)   | Controle de versão de schema / migrations       |
-| Java                    | 17 ou 21 (OpenJDK)           | Runtime do Flyway                               |
+| Java                    | 21 (OpenJDK)                 | Runtime do Flyway                               |
 
 ## ✅ Pré-requisitos
 
