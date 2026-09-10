@@ -81,15 +81,24 @@ ol10-kvm-oracle26ai-flyway/
 │       ├── outputs.tf
 │       └── templates/
 │           └── ks.cfg.tpl
+├── oracle_database/
+│   └── sfw/
+│       └── V1054592-01.zip
 ├── data/
 │   ├── kickstart/                  # Kickstarts gerados
-│   ├── oracle/                     # RPM, scripts de instalação Oracle + Flyway
+│   ├── oracle/                     # scripts de instalação Oracle
 │   │   ├── 01-preinstall.sh
-│   │   ├── 02-install-rpm.sh
-│   │   ├── 03-create-database.sh
-│   │   ├── 04-install-flyway.sh
-│   │   ├── 05-flyway-hr.sh
-│   │   └── ...
+│   │   ├── 02-copy-software.sh
+│   │   ├── 03-install-software.sh
+│   │   ├── 04-create-database.sh
+│   │   ├── response/
+│   │   │   ├── db_install.rsp.tpl
+│   │   │   ├── dbca.rsp.tpl
+│   │   │   └── netca.rsp.tpl
+│   │   └── scripts/
+│   │       ├── setEnv.sh.tpl
+│   │       ├── start_all.sh
+│   │       └── stop_all.sh
 │   ├── flyway/                     # Migrations e configuração Flyway
 │   │   └── sql/
 │   │       ├── V1__create_hr_schema.sql
