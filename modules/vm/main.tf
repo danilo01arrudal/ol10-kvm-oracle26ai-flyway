@@ -83,3 +83,76 @@ resource "null_resource" "vm" {
     EOT
   }
 }
+
+# ============================================================
+# Aguarda a instalação terminar e inicia a VM automaticamente
+# ============================================================
+resource "null_resource" "start_vm" {
+  depends_on = [null_resource.vm]
+
+  triggers = {
+    vm_name = var.name
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      set -e
+
+      VM_NAME="${self.triggers.vm_name}"
+      LOG_DIR="${path.module}/../../data/logs"
+      LOG_FILE="$LOG_DIR/start-${VM_NAME}.log"
+      mkdir -p "$LOG_DIR"
+
+      echo "=== [$(date '+%Y-%m-%d %H:%M:%S')] Aguardando instalação da VM $VM_NAME finalizar ===" | tee -a "$LOG_FILE"
+
+      # 1. Aguarda a VM aparecer no libvirt (máximo ~10 minutos)
+      for i in $(seq 1 60); do
+        if virsh dominfo "$VM_NAME" &>/dev/null; then
+          echo "VM $VM_NAME encontrada no libvirt." | tee -a "$LOG_FILE"
+          break
+        fi
+        echo "Aguardando VM aparecer... ($i/60)" | tee -a "$LOG_FILE"
+        sleep 10
+      done
+
+      if ! virsh dominfo "$VM_NAME" &>/dev/null; then
+        echo "ERRO: VM $VM_NAME não foi criada." | tee -a "$LOG_FILE"
+        exit 1
+      fi
+
+      # 2. Aguarda a VM ficar em estado shut off (instalação + reboot concluídos)
+      echo "Aguardando VM entrar em estado 'shut off'..." | tee -a "$LOG_FILE"
+      for i in $(seq 1 90); do
+        STATE=$(virsh domstate "$VM_NAME" 2>/dev/null || echo "unknown")
+        echo "Estado atual: $STATE ($i/90)" | tee -a "$LOG_FILE"
+
+        if [ "$STATE" = "shut off" ]; then
+          echo "VM está em 'shut off'. Aguardando 30 segundos de segurança..." | tee -a "$LOG_FILE"
+          sleep 30
+          break
+        fi
+
+        if [ "$STATE" = "running" ]; then
+          echo "VM já está running. Nada a fazer." | tee -a "$LOG_FILE"
+          exit 0
+        fi
+
+        sleep 10
+      done
+
+      # 3. Inicia a VM
+      echo "Iniciando VM $VM_NAME..." | tee -a "$LOG_FILE"
+      virsh start "$VM_NAME"
+
+      # 4. Confirma que ficou running
+      sleep 5
+      FINAL_STATE=$(virsh domstate "$VM_NAME")
+      if [ "$FINAL_STATE" = "running" ]; then
+        echo "=== [$(date '+%Y-%m-%d %H:%M:%S')] VM $VM_NAME iniciada com sucesso ===" | tee -a "$LOG_FILE"
+      else
+        echo "ERRO: Falha ao iniciar a VM. Estado final: $FINAL_STATE" | tee -a "$LOG_FILE"
+        exit 1
+      fi
+    EOT
+  }
+}
