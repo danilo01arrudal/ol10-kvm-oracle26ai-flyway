@@ -11,6 +11,7 @@
 
 Este projeto automatiza, de ponta a ponta, a criação de uma máquina virtual Oracle Linux 8.10 em ambiente KVM/libvirt (host Oracle Linux 10) e, após a instalação do sistema operacional, realiza:
 
+1. Criação da VM **Oracle Linux 8.10** no KVM  
 1. Instalação do **Oracle Database 26ai Enterprise Edition** (via RPM)
 2. Criação de um banco de dados (CDB + PDB)
 3. Instalação do **Flyway**
